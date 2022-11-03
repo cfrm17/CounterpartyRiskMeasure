@@ -1,2 +1,25 @@
-# CounterpartyRiskMeasure
-In an effort to improve credit risk management, financial institutions have developed various measures to manage their exposure to counterparty risk. One important measure of counterparty risk is potential future exposure (PFE)
+# CCounterparty Risk Measure
+
+In an effort to improve credit risk management, financial institutions have developed various measures to manage their exposure to counterparty risk. One important measure of counterparty risk is potential future exposure (PFE), which is a percentile, typically 95 percent, of the distribution of exposures at any particular future date. 
+
+Credit exposure is the amount a bank can potentially lose in the event that one of its counterparties defaults. Note that only OTC deals (and security financing transactions) are subject to counterparty risk. We define replacement risk in the context of this report as the maximum of the PFE at a set of pre-specified valuation time buckets.
+
+The internal economic capital models used by most technologically advanced banks require the calculation of the distribution of the exposure at specified future times[1], which is also our primary goal for two purposes: First, we need to aggregate the counterparty risk across all products of the bank’s portfolio that includes not only equity derivative, but commodities, interest rate derivatives, foreign exchange derivatives, and credit derivatives. Typical derivatives are swap, forward, option, barrier option. See https://finpricing.com/lib/EqBarrier.html
+
+Secondly, specific exposure measures that are derived from the distribution of the exposure, such as the expected exposure (EE) and expected positive exposure (EPE) are required in the calculation of the holdback capital.
+
+The difference between replacement risk and credit risk is that credit risk is a function of the counterparty’s probability of default and the cost of replacing the deal, whereas replacement risk assumes that the counterparty defaults and is concerned only with the cost of replacing the deal.
+
+There are two main components in calculating credit exposures: scenario generation and instrument valuation. The scenario generation uses Monte Carlo simulation to generate the future scenarios of various market risk factors at different future time buckets. Future market scenarios are usually generated using “real world measure” instead of “risk-neutral” measure used in pricing. Exposure calculation also requires a valuation methodology to calculate consistently the value of a deal over different time bucket in the future. 
+
+Note that the valuation methodologies used to calculate exposure could be very different from the front office pricing since for credit exposure calculations, what is important in this project is the distribution of deal values under the real world measure at different times in the future. The valuation methodologies need to be optimized in order to perform sufficiently large number of calculations required to obtain such distribution. Because of the computational intensity required to calculate counterparty exposures, compromises are usually made with regard to the number of simulation times buckets and the number of scenarios. 
+
+The simulation time buckets used by most banks to calculate credit exposure usually have daily or weekly interval up to a month, then monthly up to a year and yearly up to five year. The rationale is that as we valuate the deal farther into the future, the exposure calculation becomes less accurate due to the accumulated error from simulation discretization, and inherited errors from calibration of the underlying models, such as those due to the change of macro-economic climate. The time bucketing scheme used in our project is consistent with the above practice.
+
+The distribution of the credit exposure at future times is calculated at three different levels: deal level, product level, and portfolio level. The deal level is the exposure of the individual deal. The product level is the exposure for each product with a same counter party. e.g., the exposure for all variance swaps with Goldman Sachs & Co. 
+
+The portfolio level is the exposure of the overall portfolio of the counterparty. There are two ways to add the deals at the product level and portfolio level: with netting and without netting. Without netting includes the deals that have positive values only whereas with netting both positive values and negative values are added together. Whether netting is applicable to a given deal is subject to the coverage of netting agreement with the counterparty.
+
+The fist step in calculating credit exposure is to generate potential market scenarios at different times in the future. Monte Carlo simulation approach is used to generate scenarios for the following market factors: equity indices, underlying equity, interest rate term structure and foreign exchange rates.
+
+There are two ways that we can generate the possible future values of the market factors. The first is to generate a “path” of the market factors through time, i.e., each simulation describes a possible trajectory from time t=0 to the longest simulation time bucket. The other method is to simulate directly from time t=0 to the relevant simulation date t. Due to the fact that it is not possible to simulate scenarios without discretization in the case of our equity index model and term structure model, we use path-dependent simulation for all market factors.
